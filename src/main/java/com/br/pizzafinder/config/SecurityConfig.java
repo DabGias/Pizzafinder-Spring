@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-    AuthorizationFilter authFilter;
+    AuthorizationFilter authoFilter;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,13 +29,13 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(authoFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
     }
 
     @Bean
-    AuthenticationManager authManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
+    AuthenticationManager autheManager(AuthenticationConfiguration autheConfig) throws Exception {
+        return autheConfig.getAuthenticationManager();
     }
 
     @Bean

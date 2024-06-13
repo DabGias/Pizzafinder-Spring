@@ -73,6 +73,7 @@ public class UserController {
     
     @PostMapping("/login")
     public String login(@RequestBody @Valid UserLoginCredentials credentials) {
+        //! Erro no authenticate! Provavelmente por conta do filtro
         autheManager.authenticate(credentials.toAuthetication());
 
         String token = tokenService.generateToken(credentials);

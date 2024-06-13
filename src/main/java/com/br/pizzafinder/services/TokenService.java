@@ -15,7 +15,7 @@ public class TokenService {
         String token = JWT.create()
             .withSubject(credentials.email())
             .withIssuer("Pizzafinder")
-            .withExpiresAt(Instant.now().plus(2, ChronoUnit.MONTHS))
+            .withExpiresAt(Instant.now().plus(60, ChronoUnit.DAYS))
             .sign(Algorithm.HMAC256("secret"));
 
         return token;
