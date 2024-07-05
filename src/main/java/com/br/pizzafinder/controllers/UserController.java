@@ -50,14 +50,16 @@ public class UserController {
 
     @GetMapping
     public PagedModel<EntityModel<User>> index(@PageableDefault(size = 20) Pageable pageable, @RequestParam(required = false) String query) {
-        return assembler.toModel(query == null ? repo.findAll(pageable) : repo.findByEmail(pageable, query));
+        return assembler.toModel(query == null || query.equals("") ? repo.findAll(pageable) : repo.findByEmail(pageable, query));
     }
 
     @GetMapping("{id}")
     public EntityModel<User> show(@PathVariable Long id) {
+        //TODO: Criar um record que deixa o output de User mais legível
+
         return repo.findById(id).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!")
-        ).toModel();
+        ).toNoSelfModel();
     }
 
     @PostMapping("/create")
@@ -72,13 +74,12 @@ public class UserController {
     }
     
     @PostMapping("/login")
-    public String login(@RequestBody @Valid UserLoginCredentials credentials) {
-        //! Erro no authenticate! Provavelmente por conta do filtro
-        autheManager.authenticate(credentials.toAuthetication());
+    public ResponseEntity<String> login(@RequestBody UserLoginCredentials credentials) {
+        autheManager.authenticate(credentials.toAuthentication());
 
         String token = tokenService.generateToken(credentials);
 
-        return token;
+        return ResponseEntity.ok(token);
     }
 
     @PutMapping("{id}")

@@ -27,11 +27,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+//TODO: Adicionar roles
+
 @Entity
 @Table(
     name = "user_tb",
     uniqueConstraints = @UniqueConstraint(
-        name = "uk_user_email",
+        name = "user_email_uk",
         columnNames = "user_email"
     )
 )
@@ -66,13 +68,6 @@ public class User implements UserDetails {
 
     public User() {}
 
-    public User(Long id, @NotBlank @Pattern(regexp = "^\b([A-ZÀ-ÿ][-,a-z. ']+ +[A-ZÀ-ÿ][-,a-z. ']*)+$") String name, @Email String email, @NotBlank @Size(min = 8) String password) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
-
     public User(@NotBlank @Pattern(regexp = "^\b([A-ZÀ-ÿ][-,a-z. ']+ +[A-ZÀ-ÿ][-,a-z. ']*)+$") String name, @Email String email, @NotBlank @Size(min = 8) String password) {
         this.name = name;
         this.email = email;
@@ -83,6 +78,14 @@ public class User implements UserDetails {
         return EntityModel.of(
             this,
             linkTo(methodOn(UserController.class).show(id)).withSelfRel(),
+            linkTo(methodOn(UserController.class).destroy(id)).withRel("destroy"),
+            linkTo(methodOn(UserController.class).index(Pageable.unpaged(), null)).withRel("list-all")
+        );
+    }
+
+    public EntityModel<User> toNoSelfModel() {
+        return EntityModel.of(
+            this,
             linkTo(methodOn(UserController.class).destroy(id)).withRel("destroy"),
             linkTo(methodOn(UserController.class).index(Pageable.unpaged(), null)).withRel("list-all")
         );
@@ -121,11 +124,6 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String toString() {
-        return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + "]";
-    }
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("USER_ROLE"));
     }
@@ -133,5 +131,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return this.email;
+    }
+
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + "]";
     }
 }   

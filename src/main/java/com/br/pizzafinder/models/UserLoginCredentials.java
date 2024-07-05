@@ -4,7 +4,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 public record UserLoginCredentials(String email, String password) {
-    public Authentication toAuthetication() {
+    public Authentication toAuthentication() {
         return new UsernamePasswordAuthenticationToken(email, password);
     }
 }
